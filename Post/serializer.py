@@ -38,11 +38,19 @@ class AddPostSerializer(ModelSerializer):
 
 	def create(self, validated_data):
 		post = Post.objects.create(**validated_data)
+		from PIL import Image
+		if post.image:
+			image = Image.open(post.image.path)
+			image.save(post.image.path, quality=20, optimize=True)
 		return post
 
 	def update(self, instance, validated_data):
 		Post.objects.filter(pk=instance.pk).update(**validated_data)
 		instance.refresh_from_db()
+		from PIL import Image
+		if 'image' in validated_data:
+			image = Image.open(instance.image.path)
+			image.save(instance.image.path, quality=20, optimize=True)
 		return instance
 
 
