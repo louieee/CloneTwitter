@@ -1,3 +1,4 @@
+import django_heroku
 """
 Django settings for CloneTwitter project.
 
@@ -235,3 +236,5 @@ prod_db = dj_database_url.config()
 DATABASES['default'].update(prod_db)
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+django_heroku.settings(locals())
