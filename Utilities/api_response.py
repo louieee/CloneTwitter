@@ -1,19 +1,17 @@
 from django.conf import settings
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
-from django.db import ProgrammingError
-from django_tenants.utils import schema_context
 from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
-from rest_framework.views import exception_handler
-from rest_framework.renderers import JSONRenderer
 
 image_upload = openapi.Parameter(name="image", in_=openapi.IN_FORM, type=openapi.TYPE_FILE, required=False,
 								 description="Supported images- ('jpg, png, jpeg, webp')")
 choice_query = openapi.Parameter('choice', openapi.IN_QUERY,
 								 description="options are : all, mine, followers, following",
 								 type=openapi.TYPE_STRING)
+user_id = openapi.Parameter(name='id', in_=openapi.IN_PATH, type=openapi.TYPE_NUMBER, required=True,
+							description="This is the user's ID")
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 

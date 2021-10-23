@@ -26,7 +26,7 @@ class ReadListDeletePost(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixin
 		elif choice == 'followers':
 			queryset = cache.get(f'followers_posts_{self.request.user.id}', None)
 			if queryset is None:
-				queryset = Post.objects.filter(poster__in=self.request.user.followers)
+				queryset = Post.objects.filter(poster__in=self.request.user.followers.all())
 				cache.set(f'followers_posts_{self.request.user.id}', queryset, timeout=CACHE_TTL)
 		elif choice == 'following':
 			queryset = cache.get(f'following_posts_{self.request.user.id}', None)
@@ -53,8 +53,9 @@ class ReadListDeletePost(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixin
 
 	@api_exception
 	def destroy(self, request, *args, **kwargs):
-		return mixins.DestroyModelMixin.destroy(self, request, *args, **kwargs)
-
+		instance = self.get_object()
+		instance.delete()
+		return APISuccess(message='Post has been deleted successfully', status=status.HTTP_204_NO_CONTENT)
 
 class CreatePost(mixins.CreateModelMixin, viewsets.GenericViewSet):
 	permission_classes = (IsAuthenticated,)
@@ -66,7 +67,7 @@ class CreatePost(mixins.CreateModelMixin, viewsets.GenericViewSet):
 	@api_exception
 	def create(self, request, *args, **kwargs):
 		serializer = self.serializer_class(data=request.data)
-		serializer.context['user'] = request.data
+		serializer.context['user'] = request.user
 		serializer.context['image'] = request.FILES['image']
 		serializer.is_valid(raise_exception=True)
 		post = serializer.save()
@@ -84,9 +85,9 @@ class EditPost(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 	@swagger_auto_schema(manual_parameters=[image_upload])
 	@api_exception
 	def partial_update(self, request, *args, **kwargs):
-		serializer = self.serializer_class(data=request.data, partial=True)
-		serializer.context['user'] = request.data
+		serializer = self.serializer_class(data=request.data, instance=self.get_object(), partial=True)
+		serializer.context['user'] = request.user
 		serializer.is_valid(raise_exception=True)
 		post = serializer.save()
 		data = PostSerializer(post).data
-		return APISuccess(message='You have just added a post', data=data)
+		return APISuccess(message='You have just edited the post', data=data)

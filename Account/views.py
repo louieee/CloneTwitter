@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from Account.models import User
 from Account.serializer import SignupSerializer, BasicUserSerializer, LoginSerializer, UpdateUserDetailsSerializer, \
 	UserSerializer, UserActionSerializer
-from Utilities.api_response import api_exception, APISuccess
+from Utilities.api_response import api_exception, APISuccess, user_id
 
 
 class Signup(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -58,9 +58,9 @@ class ActionUser(APIView):
 	permission_classes = (IsAuthenticated,)
 	http_method_names = ('post', )
 
-	@swagger_auto_schema(request_body=UserActionSerializer)
+	@swagger_auto_schema(request_body=UserActionSerializer, manual_parameters=[user_id])
 	@api_exception
-	def patch(self, request, *args, **kwargs):
+	def post(self, request, *args, **kwargs):
 		serializer = UserActionSerializer(data=request.data, instance=request.user)
 		serializer.context['followee'] = kwargs['id']
 		serializer.is_valid(raise_exception=True)
@@ -74,5 +74,5 @@ class UserProfile(APIView):
 
 	@api_exception
 	def get(self, request, *args, **kwargs):
-		serializer = UserSerializer(instance=request.data)
+		serializer = UserSerializer(instance=request.user)
 		return APISuccess(message='user profile retrieved', data=serializer.data)

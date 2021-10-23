@@ -125,9 +125,11 @@ class UserActionSerializer(Serializer):
 		pass
 
 	def validate(self, initial_data):
-		if not User.objects.filter(id == self.context['followee']).exists():
+		if not User.objects.filter(id=self.context['followee']).exists():
 			raise Exception(f'No User exists with this ID "{self.context["followee"]}"')
 		self.context['followee'] = User.objects.get(id=self.context['followee'])
+		if self.context['followee'] == self.instance:
+			raise Exception('You cannot follow or unfollow yourself')
 		if initial_data['action'] == 'follow' and self.context['followee'].followers.filter(
 				id=self.instance.id).exists():
 			raise Exception('You are already following this user')

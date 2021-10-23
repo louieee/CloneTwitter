@@ -23,12 +23,16 @@ class AddPostSerializer(ModelSerializer):
 		fields = ('text',)
 
 	def validate(self, initial_data):
+		if self.instance and self.context['user'] != self.instance.poster:
+			raise Exception('You are not the author of this post')
 		text = initial_data.get('text', None)
 		image = self.context.get('image', None)
 		if text is None and image is None:
 			raise Exception('Query cannot be empty')
 		if Post.objects.filter(text=text, image=image).exists():
 			raise Exception('Duplicate data')
+		if image:
+			initial_data['image'] = image
 		initial_data['poster'] = self.context['user']
 		return initial_data
 
