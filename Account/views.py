@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, mixins, status
 # Create your views here.
@@ -14,6 +12,9 @@ from Utilities.api_response import api_exception, APISuccess, user_id
 
 
 class Signup(mixins.CreateModelMixin, viewsets.GenericViewSet):
+	'''
+		This view signs up a user
+	'''
 	queryset = User.objects.all()
 	serializer_class = SignupSerializer
 	parser_classes = (MultiPartParser,)
@@ -27,6 +28,9 @@ class Signup(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 
 class Login(APIView):
+	'''
+		This view logs a user in
+	'''
 	parser_classes = (MultiPartParser,)
 	http_method_names = ('post', )
 
@@ -40,6 +44,9 @@ class Login(APIView):
 
 
 class EditUser(APIView):
+	'''
+		This view allows a user to edit his/her details
+	'''
 	parser_classes = (MultiPartParser,)
 	permission_classes = (IsAuthenticated, )
 	http_method_names = ('patch',)
@@ -54,6 +61,9 @@ class EditUser(APIView):
 
 
 class ActionUser(APIView):
+	'''
+		This view enables a user to follow and unfollow another user
+	'''
 	parser_classes = (MultiPartParser,)
 	permission_classes = (IsAuthenticated,)
 	http_method_names = ('post', )
@@ -69,6 +79,9 @@ class ActionUser(APIView):
 
 
 class UserProfile(APIView):
+	'''
+		This view allows a user to view his profile details
+	'''
 	permission_classes = (IsAuthenticated,)
 	http_method_names = ('get',)
 

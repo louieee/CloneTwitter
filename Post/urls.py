@@ -16,6 +16,7 @@ router.register(r'post', ReadListDeletePost , basename="post")
 urlpatterns = [
 	path('post/create/', CreatePost.as_view({"post" : "create"}), name="create_post"),
 	path('post/<int:pk>/edit/', EditPost.as_view({"patch": "partial_update"}), name="edit_post"),
+	path('post/feeds/refresh/', RefreshPosts.as_view(), name="refresh_posts")
 
 ]
 urlpatterns += router.urls

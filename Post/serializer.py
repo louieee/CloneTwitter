@@ -1,13 +1,14 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from rest_framework.views import APIView
+from rest_framework.serializers import ModelSerializer
 
 from Account.serializer import BasicUserSerializer
 from Post.models import Post
 
 
 class PostSerializer(ModelSerializer):
+	'''
+		This serializer shows the details of a post
+	'''
 	poster = BasicUserSerializer(read_only=True)
 
 	class Meta:
@@ -16,6 +17,9 @@ class PostSerializer(ModelSerializer):
 
 
 class AddPostSerializer(ModelSerializer):
+	'''
+		This serializer validates and executes the process of creating or editing a post
+	'''
 	text = serializers.CharField(required=False)
 
 	class Meta:
