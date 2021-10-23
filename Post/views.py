@@ -21,6 +21,7 @@ class ReadListDeletePost(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixin
 
 	def get_queryset(self):
 		choice = self.request.query_params.get('choice', 'all')
+		choice = str(choice).lower()
 		if choice == 'mine':
 			queryset = cache.get(f'mine_posts_{self.request.user.id}', None)
 			if queryset is None:
