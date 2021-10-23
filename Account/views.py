@@ -89,3 +89,17 @@ class UserProfile(APIView):
 	def get(self, request, *args, **kwargs):
 		serializer = UserSerializer(instance=request.user)
 		return APISuccess(message='user profile retrieved', data=serializer.data)
+
+
+class Logout(APIView):
+	'''
+		This view logs a user out
+	'''
+	permission_classes = (IsAuthenticated, )
+	http_method_names = ('post', )
+
+	@api_exception
+	def post(self, request, *args, **kwargs):
+		from django.contrib import auth
+		auth.logout(request)
+		return APISuccess(message="user logged out successfully")

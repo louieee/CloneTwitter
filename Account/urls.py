@@ -19,6 +19,7 @@ router.register('user/signup', Signup, basename="user")
 urlpatterns = [
 	path('user/', UserProfile.as_view(), name="user_profile"),
     path('user/login/', Login.as_view(),name="login"),
+	path('user/logout/', Logout.as_view(), name="logout"),
 	path('user/edit/', EditUser.as_view(), name="edit_user"),
 	path('user/<int:id>/action/', ActionUser.as_view(), name="user_action")
 
